@@ -8,14 +8,6 @@ import math
 from consine_simi import consine_similarity
 from classify import classify
 
-edges_model = []
-model_path='./edge_model'
-for f in listdir(model_path):
-    if isfile(join(model_path,f)) and join(model_path,f).endswith('.jpg'):
-        full_path = join(model_path,f)
-        edges_model.append(cv2.imread(full_path, 0))
-print 'load %d edge modes' % (len(edges_model))
-
 
 cap = cv2.VideoCapture(0)
 
