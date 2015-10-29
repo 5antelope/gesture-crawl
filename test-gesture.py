@@ -6,24 +6,16 @@ import numpy as np
 import math
 
 from consine_simi import consine_similarity
+from classify import classify
 
 edges_model = []
 model_path='./edge_model'
 for f in listdir(model_path):
     if isfile(join(model_path,f)) and join(model_path,f).endswith('.jpg'):
-    	full_path = join(model_path,f)
+        full_path = join(model_path,f)
         edges_model.append(cv2.imread(full_path, 0))
 print 'load %d edge modes' % (len(edges_model))
 
-def matchEdge(f):
-    best_match = -1
-    min = 2
-    print len(edges_model)
-    for m in range(len(edges_model)):
-        if abs(consine_similarity(f, edges_model[m])) < min:
-            min = abs(consine_similarity(f, edges_model[m]))
-            best_match = m
-    return best_match
 
 cap = cv2.VideoCapture(0)
 
@@ -38,8 +30,8 @@ while(cap.isOpened()):
 
 
     edges = cv2.Canny(crop_img,100,200)
-    match_edge = matchEdge(edges)
-    print 'best match with edge %d' % (match_edge)
+    print classify(crop_img)
+    # print 'best match with edge %d' % (match_edge)
 
     value = (35, 35)
     
@@ -107,7 +99,7 @@ while(cap.isOpened()):
         cv2.putText(img,"THREE", (50,50), cv2.FONT_HERSHEY_SIMPLEX, 2, 2)
     elif defects_cnt == 4:
         cv2.putText(img,"FOUR", (5,50), cv2.FONT_HERSHEY_SIMPLEX, 2, 2)
-    elif defects_cnt == 5:	
+    elif defects_cnt == 5:    
         cv2.putText(img,"FIVE", (50,50), cv2.FONT_HERSHEY_SIMPLEX, 2, 2)
     else:
         cv2.putText(img,"Hello World", (50,50),\

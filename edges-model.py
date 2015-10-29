@@ -1,6 +1,10 @@
 import cv2
 import numpy as np
 
+'''
+Capture images for training
+'''
+
 cap = cv2.VideoCapture(0)
 
 while(cap.isOpened()):
@@ -28,4 +32,5 @@ while(cap.isOpened()):
     # capture frame by 'c'
     elif cmd == 99:
     	print 'capture image!'
-    	cv2.imwrite	( "./edge_model/model.jpg", edges);
+    	cv2.imwrite	( "./edge_model/model.jpg", crop_img);
+    	# cv2.imwrite	( "./edge_model/model.jpg", edges);
