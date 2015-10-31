@@ -32,5 +32,5 @@ while(cap.isOpened()):
     # capture frame by 'c'
     elif cmd == 99:
     	print 'capture image!'
-    	cv2.imwrite	( "./edge_model/model.jpg", crop_img);
+    	cv2.imwrite	( "./model.jpg", crop_img);
     	# cv2.imwrite	( "./edge_model/model.jpg", edges);
