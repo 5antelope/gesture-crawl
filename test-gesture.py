@@ -8,6 +8,8 @@ import math
 from consine_simi import consine_similarity
 from classify import classify
 
+cap = cv2.VideoCapture(0)
+
 def setbg():
     retval, im = cap.read()
     avg1 = np.float32(im)
@@ -40,8 +42,6 @@ def extract(imgbg,imgfg):
     rgb = cv2.merge((r,g,b))
     cv2.medianBlur(rgb,3)
     return rgb
-
-cap = cv2.VideoCapture(0)
 
 imgbg = setbg()
 
