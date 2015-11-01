@@ -8,19 +8,19 @@ import math
 from consine_simi import consine_similarity
 from classify import classify
 
+cap = cv2.VideoCapture(0)
+
 def setbg():
-    camera = cv2.VideoCapture(0)
-    retval, im = camera.read()
+    retval, im = cap.read()
     avg1 = np.float32(im)
     print "setting background"
     for i in range(100): 
-         retval, im = camera.read()
+         retval, im = cap.read()
          cv2.accumulateWeighted(im,avg1, 0.1)
          res1 = cv2.convertScaleAbs(avg1)
          cv2.waitKey(10)
     cv2.imshow("Background",res1)
     return res1
-    del(camera)
 
 # function to subtract background and frames
 def extract(imgbg,imgfg):
@@ -45,20 +45,11 @@ def extract(imgbg,imgfg):
 
 imgbg = setbg()
 
-cap = cv2.VideoCapture(0)
-
 while(cap.isOpened()):
     ret, img = cap.read()
     
     crop_img = extract(imgbg,img)
     gray= cv2.cvtColor(crop_img, cv2.COLOR_BGR2GRAY)
-    
-    # value = (35, 35)
-    # # blur the frame to reduce noise
-    # gaussian_blur = cv2.GaussianBlur(\
-    #     cv2.cvtColor(crop_img, cv2.COLOR_BGR2GRAY), \
-    #     value, \
-    #     0)
 
     _, thresh1 = cv2.threshold(gray,200,255,cv2.THRESH_BINARY)
     _, contours, hierarchy = cv2.findContours(thresh1,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
