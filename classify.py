@@ -15,9 +15,9 @@ def classify(im):
     if im == None:
         print "No such file {}\nCheck if the file exists".format(image_path)
         return -1
-    
+
     kpts, des = sift.detectAndCompute(im, None)
-    
+
     test_features = np.zeros((1, k), "float32")
     
     # words, distance = vq(des_list[0][1],voc)
