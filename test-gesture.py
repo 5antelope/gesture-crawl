@@ -48,6 +48,10 @@ imgbg = setbg()
 while(cap.isOpened()):
     ret, img = cap.read()
     
+    diff = np.linalg.norm(cv2.absdiff(imgbg, img))
+    if diff < 8000: continue
+
+    # removed background
     crop_img = extract(imgbg,img)
     gray= cv2.cvtColor(crop_img, cv2.COLOR_BGR2GRAY)
 
@@ -69,8 +73,11 @@ while(cap.isOpened()):
     cv2.imshow("Tracking", drawing)
 
     # hand_fig = img[y:y+h,x:x+w]
+    if y-50>0: y = y-50
+    if x-50>0: x = x-50
     hand_fig = img[y:y+400,x:x+400]
     cv2.imshow('hand', hand_fig)
+    
     hand_model = classify(hand_fig)
 
     if hand_model[0] == 'one':
