@@ -49,7 +49,9 @@ while(cap.isOpened()):
     ret, img = cap.read()
     
     diff = np.linalg.norm(cv2.absdiff(imgbg, img))
-    if diff < 8000: continue
+    print diff
+    if diff < 8000:
+        continue
 
     # removed background
     crop_img = extract(imgbg,img)
@@ -70,24 +72,21 @@ while(cap.isOpened()):
     cv2.drawContours(drawing, contours, max_index, (0,255,0), 2)
     cv2.rectangle(drawing, (x,y), (x+w, y+h), (0,255,0))
 
-    cv2.imshow("Tracking", drawing)
+    cv2.imshow("tracking", drawing[y:y+h,x:x+w])
 
-    # hand_fig = img[y:y+h,x:x+w]
-    if y-50>0: y = y-50
-    if x-50>0: x = x-50
-    hand_fig = img[y:y+400,x:x+400]
+    hand_fig = img[y:y+h,x:x+w]
+    # if y-50>0: y = y-50
+    # if x-50>0: x = x-50
+    # hand_fig = img[y:y+400,x:x+400]
     cv2.imshow('hand', hand_fig)
+    prediction = classify(drawing[y:y+h,x:x+w])
     
-    hand_model = classify(hand_fig)
-
-    if hand_model[0] == 'one':
-        cv2.putText(img,"MODEL ONE", (50,50), cv2.FONT_HERSHEY_SIMPLEX, 2, 2)
-    elif hand_model[0] == 'two':
-        cv2.putText(img,"MODEL TWO", (50,50), cv2.FONT_HERSHEY_SIMPLEX, 2, 2)
+    if prediction[0] == 'one':
+        cv2.putText(img,"MODEL ONE", (50,50), cv2.FONT_HERSHEY_SIMPLEX, 2, 5)
+    elif prediction[0] == 'two':
+        cv2.putText(img,"MODEL TWO", (50,50), cv2.FONT_HERSHEY_SIMPLEX, 2, 5)
     
-    cv2.imshow('Gesture', img)
-
-    # all_img = np.hstack((drawing, crop_img))
+    cv2.imshow('main', img)
     
     # exit if press ESC
     if cv2.waitKey(10) == 27:

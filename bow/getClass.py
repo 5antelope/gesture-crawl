@@ -81,6 +81,7 @@ test_features = stdSlr.transform(test_features)
 
 # Perform the predictions
 predictions =  [classes_names[i] for i in clf.predict(test_features)]
+print predictions
 
 # Visualize the results, if "visualize" flag set to true by the user
 if args["visualize"]:
