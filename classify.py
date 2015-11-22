@@ -34,5 +34,4 @@ def classify(im):
 
     # Perform the predictions
     predictions =  [classes_names[i] for i in clf.predict(test_features)]
-    print predictions
     return predictions

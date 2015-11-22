@@ -7,6 +7,7 @@ import math
 
 from consine_simi import consine_similarity
 from classify import classify
+from MotionDetector import directionCalculate
 
 cap = cv2.VideoCapture(0)
 
@@ -43,13 +44,14 @@ def extract(imgbg,imgfg):
     cv2.medianBlur(rgb,3)
     return rgb
 
+# main entry
 imgbg = setbg()
+first_frame = cv2.cvtColor(imgbg, cv2.COLOR_BGR2GRAY)
 
 while(cap.isOpened()):
     ret, img = cap.read()
     
     diff = np.linalg.norm(cv2.absdiff(imgbg, img))
-    print diff
     if diff < 8000:
         continue
 
@@ -62,6 +64,7 @@ while(cap.isOpened()):
     
     areas = [cv2.contourArea(c) for c in contours]
     max_index = np.argmax(areas) 
+
     #extract biggest contour and topmost point of that
     cnt=contours[max_index]
 
@@ -75,22 +78,33 @@ while(cap.isOpened()):
     cv2.imshow("tracking", drawing[y:y+h,x:x+w])
 
     hand_fig = img[y:y+h,x:x+w]
-    # if y-50>0: y = y-50
-    # if x-50>0: x = x-50
-    # hand_fig = img[y:y+400,x:x+400]
-    cv2.imshow('hand', hand_fig)
+    
+    # cv2.imshow('hand', hand_fig)
     prediction = classify(drawing[y:y+h,x:x+w])
+    
+    feature_params = dict( maxCorners = 100,
+             qualityLevel = 0.3,
+             minDistance = 7,
+             blockSize = 7 )
+
+    frame = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     
     if prediction[0] == 'one':
         cv2.putText(img,"MODEL ONE", (50,50), cv2.FONT_HERSHEY_SIMPLEX, 2, 5)
+        direction = directionCalculate(first_frame, frame, np.array(cnt, dtype=np.float32))
+        print 'one %s' % (direction)
     elif prediction[0] == 'two':
         cv2.putText(img,"MODEL TWO", (50,50), cv2.FONT_HERSHEY_SIMPLEX, 2, 5)
-    
+        direction = directionCalculate(first_frame, frame, np.array(cnt, dtype=np.float32))
+        print 'two %s' % (direction)
+
     cv2.imshow('main', img)
     
     # exit if press ESC
     if cv2.waitKey(10) == 27:
         break
+
+    first_frame = frame
 
 cap.release()
 cv2.destroyAllWindows()
