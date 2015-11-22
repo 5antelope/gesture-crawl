@@ -48,6 +48,10 @@ imgbg = setbg()
 while(cap.isOpened()):
     ret, img = cap.read()
     
+    diff = np.linalg.norm(cv2.absdiff(imgbg, img))
+    if diff < 8000: continue
+
+    # removed background
     crop_img = extract(imgbg,img)
     gray= cv2.cvtColor(crop_img, cv2.COLOR_BGR2GRAY)
 
