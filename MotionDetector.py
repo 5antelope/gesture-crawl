@@ -131,17 +131,18 @@ def directionCalculate(first_frame, frame, feature_points):
 # New main function
 
 # Retrieve the carmera
-# cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(0)
 
-# # Params for ShiTomasi corner detection
-# feature_params = dict( maxCorners = 100,
-#              qualityLevel = 0.3,
-#              minDistance = 7,
-#              blockSize = 7 )
-# ret, first_frame = cap.read()
-# first_gray = cv2.cvtColor(first_frame, cv2.COLOR_BGR2GRAY)
-# p0 = cv2.goodFeaturesToTrack(first_gray, mask = None, **feature_params)
-# time.sleep(1)
-# ret, frame = cap.read()
+# Params for ShiTomasi corner detection
+feature_params = dict( maxCorners = 100,
+             qualityLevel = 0.3,
+             minDistance = 7,
+             blockSize = 7 )
+ret, first_frame = cap.read()
+first_gray = cv2.cvtColor(first_frame, cv2.COLOR_BGR2GRAY)
+p0 = cv2.goodFeaturesToTrack(first_gray, mask = None, **feature_params)
+print p0
+time.sleep(1)
+ret, frame = cap.read()
 
-# print directionCalculate(first_frame, frame, p0)
+print directionCalculate(first_frame, frame, p0)
