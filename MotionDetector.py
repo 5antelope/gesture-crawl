@@ -73,7 +73,8 @@ def directionCalculate(first_frame, frame, feature_points):
 
     # Take first frame and find corners in it
     # ret, first_frame = cap.read()
-    first_gray = cv2.cvtColor(first_frame, cv2.COLOR_BGR2GRAY)
+    # first_gray = cv2.cvtColor(first_frame, cv2.COLOR_BGR2GRAY)
+    first_gray = first_frame
     #p0 = cv2.goodFeaturesToTrack(first_gray, mask = None, **feature_params)
     p0 = feature_points
     # Create a mask image for drawing purposes
@@ -86,8 +87,8 @@ def directionCalculate(first_frame, frame, feature_points):
         
     
     # ret, frame = cap.read()
-    frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    
+    # frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    frame_gray = frame
     # calculate optical flow
     p1, st, err = cv2.calcOpticalFlowPyrLK(first_gray, frame_gray, p0, None, **lk_params)
 
@@ -112,7 +113,8 @@ def directionCalculate(first_frame, frame, feature_points):
     # if (now-start_timer) > 2:
     for index in range(8):
         if directs[index] == max(directs):
-            return "zone: " + zoneStringRepresent(index)
+            # return "zone: " + zoneStringRepresent(index)
+            return index
             break
     # directs = [0] * 8
         # time.sleep(10)
