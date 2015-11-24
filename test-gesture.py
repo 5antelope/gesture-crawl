@@ -44,6 +44,23 @@ def extract(imgbg,imgfg):
     cv2.medianBlur(rgb,3)
     return rgb
 
+# Check direction
+def get_direction(gesture, current_max_idx, idx_consec_time):
+    if idx_consec_time < 5:
+        return -1
+    if gesture == 1:
+        print "index: " + str(current_max_idx)
+        if current_max_idx == 1:
+            return 0
+    elif gesture == 2:
+        if current_max_idx == 4:
+            return 0
+
+# Record direction
+current_max_idx = -1
+idx_consec_time = 0
+
+
 # main entry
 imgbg = setbg()
 first_frame = cv2.cvtColor(imgbg, cv2.COLOR_BGR2GRAY)
@@ -52,8 +69,8 @@ while(cap.isOpened()):
     ret, img = cap.read()
     
     diff = np.linalg.norm(cv2.absdiff(imgbg, img))
-    if diff < 8000:
-        continue
+    # if diff < 8000:
+    #     continue
 
     # removed background
     crop_img = extract(imgbg,img)
@@ -88,15 +105,24 @@ while(cap.isOpened()):
              blockSize = 7 )
 
     frame = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    direction = directionCalculate(first_frame, frame, np.array(cnt, dtype=np.float32))
+    if direction == current_max_idx:
+        idx_consec_time += 1
+    else:
+        current_max_idx = direction
+        idx_consec_time = 0
     
     if prediction[0] == 'one':
-        cv2.putText(img,"MODEL ONE", (50,50), cv2.FONT_HERSHEY_SIMPLEX, 2, 5)
-        direction = directionCalculate(first_frame, frame, np.array(cnt, dtype=np.float32))
-        print 'one %s' % (direction)
+        if get_direction(1, current_max_idx, idx_consec_time) == 0:
+            cv2.putText(img,"MODEL ONE", (50,50), cv2.FONT_HERSHEY_SIMPLEX, 2, 5)
+        # direction = directionCalculate(first_frame, frame, np.array(cnt, dtype=np.float32))
+        # print 'one %s' % (direction)
     elif prediction[0] == 'two':
         cv2.putText(img,"MODEL TWO", (50,50), cv2.FONT_HERSHEY_SIMPLEX, 2, 5)
-        direction = directionCalculate(first_frame, frame, np.array(cnt, dtype=np.float32))
-        print 'two %s' % (direction)
+        get_direction(2, current_max_idx, idx_consec_time)
+        # direction = directionCalculate(first_frame, frame, np.array(cnt, dtype=np.float32))
+        # print 'two %s' % (direction)
 
     cv2.imshow('main', img)
     

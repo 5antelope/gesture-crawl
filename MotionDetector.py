@@ -9,7 +9,9 @@ def directionCalculate(first_frame, frame, feature_points):
     def calcZone(x1, y1, x2, y2):
         zone = [-1, 0]
         dx = x2 - x1
-        dy = y2 - y1
+        # dy = y2 - y1
+        # lower is bigger, thus switch the values.
+        dy = y1 - y2
         # distance
         zone[1] = hypot(dx, dy)
         rads = atan2(dx, dy)
@@ -133,18 +135,18 @@ def directionCalculate(first_frame, frame, feature_points):
 # New main function
 
 # Retrieve the carmera
-cap = cv2.VideoCapture(0)
+# cap = cv2.VideoCapture(0)
 
 # Params for ShiTomasi corner detection
-feature_params = dict( maxCorners = 100,
-             qualityLevel = 0.3,
-             minDistance = 7,
-             blockSize = 7 )
-ret, first_frame = cap.read()
-first_gray = cv2.cvtColor(first_frame, cv2.COLOR_BGR2GRAY)
-p0 = cv2.goodFeaturesToTrack(first_gray, mask = None, **feature_params)
-print p0
-time.sleep(1)
-ret, frame = cap.read()
+# feature_params = dict( maxCorners = 100,
+#              qualityLevel = 0.3,
+#              minDistance = 7,
+#              blockSize = 7 )
+# ret, first_frame = cap.read()
+# first_gray = cv2.cvtColor(first_frame, cv2.COLOR_BGR2GRAY)
+# p0 = cv2.goodFeaturesToTrack(first_gray, mask = None, **feature_params)
+# print p0
+# time.sleep(1)
+# ret, frame = cap.read()
 
-print directionCalculate(first_frame, frame, p0)
+# print directionCalculate(first_frame, frame, p0)
