@@ -12,3 +12,8 @@ set up [opencv](http://www.pyimagesearch.com/2015/06/15/install-opencv-3-0-and-p
 
 run `$python` under `.virtualenvs/cv/lib/python2.7/site-packages/`, make sure you can `import cv2`
 
+### Gesture dictionary:
+- fist move far and close around mouth: **eat**
+- five-fingers move to left-top: **airplane**
+- five-fingers move left-right: **parents**
+- one-finer move up: **up**
