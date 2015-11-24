@@ -4,7 +4,6 @@ from os.path import isfile, join
 import cv2
 import numpy as np
 import math
-import time
 
 from consine_simi import consine_similarity
 from classify import classify
@@ -45,22 +44,6 @@ def extract(imgbg,imgfg):
     cv2.medianBlur(rgb,3)
     return rgb
 
-def set_direction(gesture_dict, value):
-    for key in gesture_dict:
-        if key == value:
-            gesture_dict[value] = True
-        else:
-            gesture_dict[key] = False
-
-# Record direction
-current_max_idx = -1
-idx_consec_time = 0
-chose_direction = -1
-
-# Record gesture dictionary
-gesture_dict = {'eat': False, 'airplane':False, 'parents':False, 'up':False}
-start_timer = time.time()
-
 # main entry
 imgbg = setbg()
 first_frame = cv2.cvtColor(imgbg, cv2.COLOR_BGR2GRAY)
@@ -69,8 +52,8 @@ while(cap.isOpened()):
     ret, img = cap.read()
     
     diff = np.linalg.norm(cv2.absdiff(imgbg, img))
-    # if diff < 8000:
-    #     continue
+    if diff < 8000:
+        continue
 
     # removed background
     crop_img = extract(imgbg,img)
@@ -105,49 +88,19 @@ while(cap.isOpened()):
              blockSize = 7 )
 
     frame = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
-    direction = directionCalculate(first_frame, frame, np.array(cnt, dtype=np.float32))
-    if direction == current_max_idx:
-        idx_consec_time += 1
-    else:
-        current_max_idx = direction
-        idx_consec_time = 0
-
-    if idx_consec_time < 5:
-        chose_direction =  -1
-    else:
-        chose_direction = current_max_idx
-        print 'chose_direction: ' + str(chose_direction)
     
     if prediction[0] == 'one':
-
-        if chose_direction == 1:
-            set_direction(gesture_dict, 'airplane')
-            start_timer = time.time()
-        elif chose_direction == 6:
-            set_direction(gesture_dict, 'parents')
-            start_timer = time.time()
-        # print 'one %s' % (direction)
+        cv2.putText(img,"MODEL ONE", (50,50), cv2.FONT_HERSHEY_SIMPLEX, 2, (51, 102, 204))
+        direction = directionCalculate(first_frame, frame, np.array(cnt, dtype=np.float32))
+        print 'one %s' % (direction)
     elif prediction[0] == 'two':
-        if chose_direction == 2 or chose_direction == 6:
-            set_direction(gesture_dict, 'eat')
-            start_timer = time.time()
-        # print 'two %s' % (direction)
+        cv2.putText(img,"MODEL TWO", (50,50), cv2.FONT_HERSHEY_SIMPLEX, 2, (51, 102, 204))
+        direction = directionCalculate(first_frame, frame, np.array(cnt, dtype=np.float32))
+        print 'two %s' % (direction)
     elif prediction[0] == 'three':
-        if chose_direction == 0 or chose_direction == 1 or chose_direction == 7:
-            set_direction(gesture_dict, 'up')
-            start_timer = time.time()
-        # print 'three %s' % (direction)
-
-    for key in gesture_dict:
-        if gesture_dict[key] == True:
-            now = time.time()
-            if (now - start_timer) <= 5: 
-                cv2.putText(img, key, (50,50), cv2.FONT_HERSHEY_SIMPLEX, 2, (51, 102, 204))
-            else:
-                set_direction(get_direction, 'clear')
-                
-
+    	cv2.putText(img,"MODEL THREE", (50,50), cv2.FONT_HERSHEY_SIMPLEX, 2, (51, 102, 204))
+        direction = directionCalculate(first_frame, frame, np.array(cnt, dtype=np.float32))
+        print 'three %s' % (direction)
 
     cv2.imshow('main', img)
     
