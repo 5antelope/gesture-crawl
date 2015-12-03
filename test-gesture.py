@@ -142,10 +142,10 @@ while(cap.isOpened()):
     for key in gesture_dict:
         if gesture_dict[key] == True:
             now = time.time()
-            if (now - start_timer) <= 5: 
+            if (now - start_timer) <= 20: 
                 cv2.putText(img, key, (50,50), cv2.FONT_HERSHEY_SIMPLEX, 2, (51, 102, 204))
             else:
-                set_direction(get_direction, 'clear')
+                set_direction(gesture_dict, 'clear')
                 
 
 
