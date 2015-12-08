@@ -91,16 +91,16 @@ while(cap.isOpened()):
     
     if prediction[0] == 'one':
         cv2.putText(img,"MODEL ONE", (50,50), cv2.FONT_HERSHEY_SIMPLEX, 2, (51, 102, 204))
-        direction = directionCalculate(first_frame, frame, np.array(cnt, dtype=np.float32))
-        print 'one %s' % (direction)
+        # direction = directionCalculate(first_frame, frame, np.array(cnt, dtype=np.float32))
+        # print 'one %s' % (direction)
     elif prediction[0] == 'two':
         cv2.putText(img,"MODEL TWO", (50,50), cv2.FONT_HERSHEY_SIMPLEX, 2, (51, 102, 204))
-        direction = directionCalculate(first_frame, frame, np.array(cnt, dtype=np.float32))
-        print 'two %s' % (direction)
+        # direction = directionCalculate(first_frame, frame, np.array(cnt, dtype=np.float32))
+        # print 'two %s' % (direction)
     elif prediction[0] == 'three':
     	cv2.putText(img,"MODEL THREE", (50,50), cv2.FONT_HERSHEY_SIMPLEX, 2, (51, 102, 204))
-        direction = directionCalculate(first_frame, frame, np.array(cnt, dtype=np.float32))
-        print 'three %s' % (direction)
+        # direction = directionCalculate(first_frame, frame, np.array(cnt, dtype=np.float32))
+        # print 'three %s' % (direction)
 
     cv2.imshow('main', img)
     

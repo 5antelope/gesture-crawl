@@ -16,7 +16,7 @@ def setbg():
     retval, im = cap.read()
     avg1 = np.float32(im)
     print "setting background"
-    for i in range(100): 
+    for i in range(100):
          retval, im = cap.read()
          cv2.accumulateWeighted(im,avg1, 0.1)
          res1 = cv2.convertScaleAbs(avg1)
@@ -26,18 +26,18 @@ def setbg():
 
 # function to subtract background and frames
 def extract(imgbg,imgfg):
-    # split the images into RGB channels 
+    # split the images into RGB channels
     b1,g1,r1 = cv2.split(imgbg)
     b2,g2,r2 = cv2.split(imgfg)
 
-    # find absolute difference between respective channels 
+    # find absolute difference between respective channels
     bb = cv2.absdiff(b1,b2)
     gg = cv2.absdiff(g1,g2)
     rr = cv2.absdiff(r1,r2)
 
     # threshold each channel
     ret1, b = cv2.threshold(bb,50,255,cv2.THRESH_BINARY)
-    ret2, g = cv2.threshold(gg,50,255,cv2.THRESH_BINARY) 
+    ret2, g = cv2.threshold(gg,50,255,cv2.THRESH_BINARY)
     ret3, r = cv2.threshold(rr,50,255,cv2.THRESH_BINARY)
 
     # merge and blur the image
@@ -66,96 +66,96 @@ imgbg = setbg()
 first_frame = cv2.cvtColor(imgbg, cv2.COLOR_BGR2GRAY)
 
 while(cap.isOpened()):
-    ret, img = cap.read()
-    
-    diff = np.linalg.norm(cv2.absdiff(imgbg, img))
-    # if diff < 8000:
-    #     continue
+	try:
+	    ret, img = cap.read()
 
-    # removed background
-    crop_img = extract(imgbg,img)
-    gray= cv2.cvtColor(crop_img, cv2.COLOR_BGR2GRAY)
+	    diff = np.linalg.norm(cv2.absdiff(imgbg, img))
+	    # if diff < 8000:
+	    #     continue
 
-    _, thresh1 = cv2.threshold(gray,200,255,cv2.THRESH_BINARY)
-    _, contours, hierarchy = cv2.findContours(thresh1,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
-    
-    areas = [cv2.contourArea(c) for c in contours]
-    max_index = np.argmax(areas) 
+	    # removed background
+	    crop_img = extract(imgbg,img)
+	    gray= cv2.cvtColor(crop_img, cv2.COLOR_BGR2GRAY)
 
-    #extract biggest contour and topmost point of that
-    cnt=contours[max_index]
+	    _, thresh1 = cv2.threshold(gray,200,255,cv2.THRESH_BINARY)
+	    _, contours, hierarchy = cv2.findContours(thresh1,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
 
-    # area: (x,y), (x+w, y+h)
-    x,y,w,h = cv2.boundingRect(cnt)
-    
-    drawing = np.zeros(crop_img.shape, np.uint8)
-    cv2.drawContours(drawing, contours, max_index, (0,255,0), 2)
-    cv2.rectangle(drawing, (x,y), (x+w, y+h), (0,255,0))
+	    areas = [cv2.contourArea(c) for c in contours]
+	    max_index = np.argmax(areas)
 
-    cv2.imshow("tracking", drawing[y:y+h,x:x+w])
+	    #extract biggest contour and topmost point of that
+	    cnt=contours[max_index]
 
-    hand_fig = img[y:y+h,x:x+w]
-    
-    # cv2.imshow('hand', hand_fig)
-    prediction = classify(drawing[y:y+h,x:x+w])
-    
-    feature_params = dict( maxCorners = 100,
-             qualityLevel = 0.3,
-             minDistance = 7,
-             blockSize = 7 )
+	    # area: (x,y), (x+w, y+h)
+	    x,y,w,h = cv2.boundingRect(cnt)
 
-    frame = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+	    drawing = np.zeros(crop_img.shape, np.uint8)
+	    cv2.drawContours(drawing, contours, max_index, (0,255,0), 2)
+	    cv2.rectangle(drawing, (x,y), (x+w, y+h), (0,255,0))
 
-    direction = directionCalculate(first_frame, frame, np.array(cnt, dtype=np.float32))
-    if direction == current_max_idx:
-        idx_consec_time += 1
-    else:
-        current_max_idx = direction
-        idx_consec_time = 0
+	    cv2.imshow("tracking", drawing[y:y+h,x:x+w])
 
-    if idx_consec_time < 5:
-        chose_direction =  -1
-    else:
-        chose_direction = current_max_idx
-        print 'chose_direction: ' + str(chose_direction)
-    
-    if prediction[0] == 'one':
+	    hand_fig = img[y:y+h,x:x+w]
 
-        if chose_direction == 1:
-            set_direction(gesture_dict, 'airplane')
-            start_timer = time.time()
-        elif chose_direction == 6:
-            set_direction(gesture_dict, 'parents')
-            start_timer = time.time()
-        # print 'one %s' % (direction)
-    elif prediction[0] == 'two':
-        if chose_direction == 2 or chose_direction == 6:
-            set_direction(gesture_dict, 'eat')
-            start_timer = time.time()
-        # print 'two %s' % (direction)
-    elif prediction[0] == 'three':
-        if chose_direction == 0 or chose_direction == 1 or chose_direction == 7:
-            set_direction(gesture_dict, 'up')
-            start_timer = time.time()
-        # print 'three %s' % (direction)
+	    # cv2.imshow('hand', hand_fig)
+	    prediction = classify(drawing[y:y+h,x:x+w])
 
-    for key in gesture_dict:
-        if gesture_dict[key] == True:
-            now = time.time()
-            if (now - start_timer) <= 5: 
-                cv2.putText(img, key, (50,50), cv2.FONT_HERSHEY_SIMPLEX, 2, (51, 102, 204))
-            else:
-                set_direction(get_direction, 'clear')
-                
+	    feature_params = dict( maxCorners = 100,
+	             qualityLevel = 0.3,
+	             minDistance = 7,
+	             blockSize = 7 )
 
+	    frame = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-    cv2.imshow('main', img)
-    
-    # exit if press ESC
-    if cv2.waitKey(10) == 27:
-        break
+	    direction = directionCalculate(first_frame, frame, np.array(cnt, dtype=np.float32))
+	    if direction == current_max_idx:
+	        idx_consec_time += 1
+	    else:
+	        current_max_idx = direction
+	        idx_consec_time = 0
 
-    first_frame = frame
+	    if idx_consec_time < 3:
+	        chose_direction =  -1
+	    else:
+	        chose_direction = current_max_idx
+	        print 'chose_direction: ' + str(chose_direction)
+
+	    if prediction[0] == 'one':
+	        if chose_direction == 1:
+	            set_direction(gesture_dict, 'airplane')
+	            start_timer = time.time()
+	        elif chose_direction == 6:
+	            set_direction(gesture_dict, 'parents')
+	            start_timer = time.time()
+	        print 'one %s' % (direction)
+	    elif prediction[0] == 'two':
+	        if chose_direction == 2 or chose_direction == 6:
+	            set_direction(gesture_dict, 'eat')
+	            start_timer = time.time()
+	        print 'two %s' % (direction)
+	    elif prediction[0] == 'three':
+	        if chose_direction == 0 or chose_direction == 1 or chose_direction == 7:
+	            set_direction(gesture_dict, 'up')
+	            start_timer = time.time()
+	        print 'three %s' % (direction)
+
+	    for key in gesture_dict:
+	        if gesture_dict[key] == True:
+	            now = time.time()
+	            if (now - start_timer) <= 5:
+	                cv2.putText(img, key, (50,50), cv2.FONT_HERSHEY_SIMPLEX, 2, (51, 102, 204))
+	            else:
+	                set_direction(get_direction, 'clear')
+
+	    cv2.imshow('main', img)
+
+	    # exit if press ESC
+	    if cv2.waitKey(10) == 27:
+	        break
+
+	    first_frame = frame
+	except:
+		continue
 
 cap.release()
 cv2.destroyAllWindows()
