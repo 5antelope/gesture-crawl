@@ -56,14 +56,6 @@ def directionCalculate(first_frame, frame, feature_points):
         return zs
 
 
-    # Retrieve the carmera
-    # cap = cv2.VideoCapture(0)
-
-    # Params for ShiTomasi corner detection
-    # feature_params = dict( maxCorners = 100,
-    #              qualityLevel = 0.3,
-    #              minDistance = 7,
-    #              blockSize = 7 )
 
     # Parameters for lucas kanade optical flow
     lk_params = dict( winSize  = (15,15),
@@ -74,15 +66,10 @@ def directionCalculate(first_frame, frame, feature_points):
     color = np.random.randint(0,255,(100,3))
 
     # Take first frame and find corners in it
-    # ret, first_frame = cap.read()
-    # first_gray = cv2.cvtColor(first_frame, cv2.COLOR_BGR2GRAY)
     first_gray = first_frame
     #p0 = cv2.goodFeaturesToTrack(first_gray, mask = None, **feature_params)
     p0 = feature_points
     # Create a mask image for drawing purposes
-    # mask = np.zeros_like(first_frame)
-
-    # start_timer = time.time()
     directs = [0] * 8;
 
     # while(True):
@@ -108,45 +95,14 @@ def directionCalculate(first_frame, frame, feature_points):
             print 'ERROR CALCULATING THE ZONE'
         else:
             directs[zone[0]] += zone[1]
-        # mask = cv2.line(mask, (a,b),(c,d), color[i].tolist(), 2)
-        # frame = cv2.circle(frame,(a,b),5,color[i].tolist(),-1)
-    # img = cv2.add(frame,mask)
-    # now = time.time()
-    # if (now-start_timer) > 2:
     for index in range(8):
         if directs[index] == max(directs):
             # return "zone: " + zoneStringRepresent(index)
             return index
             break
-    # directs = [0] * 8
-        # time.sleep(10)
-        # start_timer = time.time()
-    # cv2.imshow('frame',img)
 
     
     # Now update the previous frame and previous points
     first_gray = frame_gray.copy()
     p0 = good_new.reshape(-1,1,2)
 
-# cv2.destroyAllWindows()
-# cap.release()
-
-
-# New main function
-
-# Retrieve the carmera
-# cap = cv2.VideoCapture(0)
-
-# Params for ShiTomasi corner detection
-# feature_params = dict( maxCorners = 100,
-#              qualityLevel = 0.3,
-#              minDistance = 7,
-#              blockSize = 7 )
-# ret, first_frame = cap.read()
-# first_gray = cv2.cvtColor(first_frame, cv2.COLOR_BGR2GRAY)
-# p0 = cv2.goodFeaturesToTrack(first_gray, mask = None, **feature_params)
-# print p0
-# time.sleep(1)
-# ret, frame = cap.read()
-
-# print directionCalculate(first_frame, frame, p0)
